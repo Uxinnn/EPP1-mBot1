@@ -24,4 +24,4 @@
 * Eric - sensors_branch
 * Xin Yu - black_line_branch
 * Shixi - colour_detection_branch
-* Oviya - sensors_branch
+* Oviya - controls_branch

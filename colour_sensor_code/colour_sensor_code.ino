@@ -4,13 +4,10 @@ MeLightSensor lightSensor(PORT_6);
 MeRGBLed led(PORT_7, 2);
 
 // Define time delay before the next RGB colour turns ON to allow LDR to stabilize
-#define RGBWait 200 //in milliseconds 
+#define DELAY 200 //in milliseconds 
 
 // Define time delay before taking another LDR reading
 #define LDRWait 10 //in milliseconds 
-
-// Define colour sensor LED pins
-int ledArray[] = {2,3,4};
 
 //placeholders for colour detected
 int red = 0;
@@ -55,14 +52,14 @@ void colorSensor(){
         led.setColor(0, 0, blue1);
       }
       led.show();
-      delay(RGBWait);
+      delay(DELAY);
 //get the average of 5 consecutive readings for the current colour and return an average 
       colourArray[c] = getAvgReading(5);
 //the average reading returned minus the lowest value divided by the maximum possible range, multiplied by 255 will give a value between 0-255, representing the value for the current reflectivity (i.e. the colour LDR is exposed to)
       colourArray[c] = (colourArray[c] - blackArray[c])/(greyDiff[c])*255;
       led.setColor(0, 0, 0);  //turn off the current LED colour
       led.show();
-      delay(RGBWait);
+      delay(DELAY);
       Serial.println(int(colourArray[c])); //show the value for the current colour LED, which corresponds to either the R, G or B of the RGB code
    } 
   }
@@ -79,27 +76,27 @@ void setBalance(){
 
   led.setColor(red1, 0, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
   whiteArray[0] = getAvgReading(5);
   led.setColor(0, 0, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
 
   led.setColor(0, green1, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
   whiteArray[1] = getAvgReading(5);
   led.setColor(0, 0, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
 
   led.setColor(0, 0, blue1);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
   whiteArray[2] = getAvgReading(5);
   led.setColor(0, 0, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
 
 //done scanning white, time for the black sample.
 //set black balance
@@ -109,27 +106,27 @@ void setBalance(){
 
   led.setColor(red1, 0, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
   blackArray[0] = getAvgReading(5);
   led.setColor(0, 0, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
 
   led.setColor(0, green1, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
   blackArray[1] = getAvgReading(5);
   led.setColor(0, 0, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
 
   led.setColor(0, 0, blue1);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
   blackArray[2] = getAvgReading(5);
   led.setColor(0, 0, 0);
   led.show();
-  delay(RGBWait);
+  delay(DELAY);
 
 //the differnce between the maximum and the minimum gives the range
   for(int i = 0; i <= 2; i++){ 
@@ -140,7 +137,7 @@ void setBalance(){
 int getAvgReading(int times){      
 //find the average reading for the requested number of times of scanning LDR
   int reading;
-  int total =0;
+  int total = 0;
 //take the reading as many times as requested and add them up
   for(int i = 0;i < times;i++){
      reading = lightSensor.read();
