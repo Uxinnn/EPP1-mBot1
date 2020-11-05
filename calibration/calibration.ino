@@ -123,22 +123,22 @@ char get_colour(){
   if (colourArray[0] > 200 && colourArray[1] > 200 && colourArray[2] > 200) {
     Serial.println('N');
     return 'N';
-  } else if (colourArray[0] > 200) {
+  } else if (colourArray[0] > 220) {
     Serial.println('Y');
     return 'Y';
   } else if (colourArray[0] < 20 && colourArray[1] < 20) {
     Serial.println('K');
     return 'K';
-  } else if (colourArray[0] < 60) {
+  } else if (colourArray[0] < 90) {
     Serial.println('G');
     return 'G';
-  } else if (colourArray[1] < 60) {
+  } else if (colourArray[1] < 90) {
     Serial.println('R');
     return 'R';
-  } else if (colourArray[1] > 130) {
+  } else if (colourArray[1] > 180) {
     Serial.println('B');
     return 'B';
-  } else if (colourArray[2] > 120) {
+  } else if (colourArray[2] > 110) {
     Serial.println('P');
     return 'P';
   } else {

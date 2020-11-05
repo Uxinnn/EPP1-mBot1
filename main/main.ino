@@ -5,8 +5,8 @@ MeDCMotor motorL(M2);  // left motor
 MeDCMotor motorR(M1);  // right motor
 int speedL = 245;  // speed of left motor
 int speedR = 255;  // speed of right motor
-int turnDelayL = 335;  // in milliseconds, trial and error
-int turnDelayR = 340;
+int turnDelayL = 280;  // in milliseconds, trial and error
+int turnDelayR = 280;
 int NUDGE_FACTOR = 20;  // Reduce speed of one motor by factor to prevent collision
 
 // Black line detector variables
@@ -15,18 +15,21 @@ MeLineFollower lineFinder(PORT_2);  // Black line sensor
 // Colour sensor variables
 MeLightSensor lightSensor(PORT_6);  // Light sensor
 MeRGBLed led(PORT_7);  // Led
-float greyDiff[] = {518,534,544};  // Edit after calibration
-float blackArray[] = {454, 407, 423};  // Edit after calibration
+float greyDiff[] = {225,199,223};  // Edit after calibration
+float blackArray[] = {231, 185, 207};  // Edit after calibration
 float colourArray[] = {0,0,0};
 
 // Ultrasonic variables
 MeUltrasonicSensor ultr(PORT_3);  // Ultrasound sensor
-int ULTR_DIST_LIMIT = 5;  // Below this value will cause mbot to go backwards to prevent collision
+int ULTR_DIST_LIMIT = 6;  // Below this value will cause mbot to go backwards to prevent collision
 
 // IR variables
 #define ir_left_pin A0  // left
 #define ir_right_pin A1  // right
-int IR_DIST_LIMIT = 520;  // Below this value will cause nudge
+int IR_DIST_LIMIT_LEFT = 615;  // Below this value will cause nudge
+int IR_DIST_LIMIT_RIGHT = 615;  // Below this value will cause nudge
+//float IR_L = 800;
+//float IR_R = 800;
 
 // Tune variables
 #define NOTE_A4  440
@@ -69,17 +72,19 @@ void loop() {
     Serial.println("NUDGE RIGHT");
     
     motorL.run(-255);
-    motorR.stop();
+//    motorR.stop();
+    motorR.run(100);
     delay(100);
-    motorL.run(-speedL);
-    motorR.run(speedR);
+   motorL.run(-speedL);
+   motorR.run(speedR);
   }
   if (infrared_sensor() == 2) {
     // nudge left if mbot is too far right
     Serial.println("NUDGE LEFT");
 
     motorR.run(255);
-    motorL.stop();
+//    motorL.stop();
+    motorL.run(-100);;
     delay(100);
     motorL.run(-speedL);
     motorR.run(speedR);
@@ -108,14 +113,17 @@ void turn_left() {
 }
 
 void turn_around() {
-  turn_left();
-  turn_left();
+  turn_right();
+  motorL.stop();
+  motorR.stop();
+  delay(10);
+  turn_right();
 }
 
 void forward() {
   motorL.run(-speedL);
   motorR.run(speedR);
-  delay(700);
+  delay(500);
 }
 
 void successive_left_turn() {
@@ -210,22 +218,22 @@ char get_colour(){
   if (colourArray[0] > 200 && colourArray[1] > 200 && colourArray[2] > 200) {
     Serial.println('N');
     return 'N';
-  } else if (colourArray[0] > 200) {
+  } else if (colourArray[0] > 230) {
     Serial.println('Y');
     return 'Y';
   } else if (colourArray[0] < 20 && colourArray[1] < 20) {
     Serial.println('K');
     return 'K';
-  } else if (colourArray[0] < 60) {
+  } else if (colourArray[0] < 90) {
     Serial.println('G');
     return 'G';
-  } else if (colourArray[1] < 60) {
+  } else if (colourArray[1] < 90) {
     Serial.println('R');
     return 'R';
-  } else if (colourArray[1] > 130) {
+  } else if (colourArray[1] > 160) {
     Serial.println('B');
     return 'B';
-  } else if (colourArray[2] > 120) {
+  } else if (colourArray[2] > 110) {
     Serial.println('P');
     return 'P';
   } else {
@@ -271,10 +279,10 @@ int infrared_sensor() {
   Serial.print(", ");
   Serial.println(right_dist);
 
-  if (left_dist <= IR_DIST_LIMIT && left_dist < right_dist) {
+  if (left_dist <= IR_DIST_LIMIT_LEFT) {
     return 1;  // 1 for nudge right
   }
-  if (right_dist <= IR_DIST_LIMIT && right_dist < left_dist) {
+  if (right_dist <= IR_DIST_LIMIT_RIGHT) {
     return 2;  // 2 for nudge left
   }
   return 0;
