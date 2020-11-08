@@ -75,7 +75,7 @@ void turnCalibrationR(int start, int ending){
     turnCalibrationR(start + (ending - start) / 2, ending);
   } 
   else{
-    Serial.print("turnDelayR: ");
+    Serial.println("turnDelayR: ");
     Serial.println(turnDelayR);
   }   
 }
@@ -97,8 +97,8 @@ void turnCalibrationL(int start, int ending){
     turnCalibrationL(start + (ending - start) / 2, ending);
   } 
   else{
-    Serial.print("turnDelayL: ");
-    Serial.println(turnDelayL);
+    Serial.println("turnDelayL: ");
+    Serial.print(turnDelayL);
     turnCalibrationR(0, 450);    
   }
 }
@@ -123,7 +123,7 @@ void leftMotorCalibration(int start, int ending) {
   }
   else {
     Serial.print("speedL: ");
-    Serial.println(speedL);
+    Serial.print(speedL);
     turnCalibrationL(0, 450);
   }
 }
