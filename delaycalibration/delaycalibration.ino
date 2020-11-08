@@ -5,9 +5,8 @@ MeDCMotor motorL(M2);  // left motor
 MeDCMotor motorR(M1);  // right motor
 int speedL = 245;  // speed of left motor
 int speedR = 255;  // speed of right motor
-int turnDelayL = 335;  // in milliseconds, trial and error
-int turnDelayR = 300;
-int gridDelay = 1000;
+int turnDelayL = 280;  // in milliseconds, trial and error
+int turnDelayR = 280;
 
 //--------------CONTROLS--------------//
 void halt(){
