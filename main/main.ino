@@ -14,8 +14,8 @@ MeLineFollower lineFinder(PORT_2);  // Black line sensor
 // Colour sensor variables
 MeLightSensor lightSensor(PORT_6);  // Light sensor
 MeRGBLed led(PORT_7);  // Led
-float greyDiff[] = {225,199,223};  // Edit after calibration
-float blackArray[] = {231, 185, 207};  // Edit after calibration
+float greyDiff[] = {169,158,172};  // Edit after calibration
+float blackArray[] = {236, 190, 212};  // Edit after calibration
 float colourArray[] = {0,0,0};
 char c = 'N';  // Variable to store colour code of detected colour
 

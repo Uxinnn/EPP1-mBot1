@@ -8,8 +8,8 @@ MeDCMotor motorL(M2);  // Left motor
 MeDCMotor motorR(M1);  // Right motor
 int speedL = 245;  // Speed of left motor, to calibrate
 int speedR = 255;  // Speed of right motor, to calibrate
-int turnDelayL = 280;  // In milliseconds, to calibrate
-int turnDelayR = 280;  // In milliseconds, to calibrate
+int turnDelayL = 265;  // In milliseconds, to calibrate
+int turnDelayR = 265;  // In milliseconds, to calibrate
 
 // Colour sensor variables
 MeLightSensor lightSensor(PORT_6);
@@ -141,7 +141,8 @@ char get_colour(){
   for(int c = 0;c<3;c++){
     led.setColor((c==0) ? 255:0, (c==1) ? 255:0,(c==2) ? 255:0); led.show();
     delay(DELAY);
-    colourArray[c] = getAvgReading(5);  // Get intensity of light
+    colourArray[c] = lightSensor.read();
+//    colourArray[c] = getAvgReading(5);  // Get intensity of light
     colourArray[c] = (colourArray[c] - blackArray[c])/(greyDiff[c])*255;
     led.setColor(0, 0, 0); led.show();
     delay(DELAY);

@@ -3,10 +3,10 @@
 // Motor variables
 MeDCMotor motorL(M2);  // left motor
 MeDCMotor motorR(M1);  // right motor
-int speedL = 245;  // speed of left motor
+int speedL = 255;  // speed of left motor
 int speedR = 255;  // speed of right motor
-int turnDelayL = 280;  // in milliseconds, trial and error
-int turnDelayR = 280;
+int turnDelayL = 265;  // in milliseconds, trial and error
+int turnDelayR = 265;
 //int NUDGE_FACTOR = 20;  // Reduce speed of one motor by factor to prevent collision
 
 // Black line detector variables
@@ -15,21 +15,19 @@ MeLineFollower lineFinder(PORT_2);  // Black line sensor
 // Colour sensor variables
 MeLightSensor lightSensor(PORT_6);  // Light sensor
 MeRGBLed led(PORT_7);  // Led
-float greyDiff[] = {225,199,223};  // Edit after calibration
-float blackArray[] = {231, 185, 207};  // Edit after calibration
+float greyDiff[] = {189,169,191};  // Edit after calibration
+float blackArray[] = {236, 190, 214};  // Edit after calibration
 float colourArray[] = {0,0,0};
 
 // Ultrasonic variables
 MeUltrasonicSensor ultr(PORT_3);  // Ultrasound sensor
-int ULTR_DIST_LIMIT = 6;  // Below this value will cause mbot to go backwards to prevent collision
+int ULTR_DIST_LIMIT = 5;  // Below this value will cause mbot to go backwards to prevent collision
 
 // IR variables
 #define ir_left_pin A0  // left
 #define ir_right_pin A1  // right
-int IR_DIST_LIMIT_LEFT = 615;  // Below this value will cause nudge
-int IR_DIST_LIMIT_RIGHT = 615;  // Below this value will cause nudge
-//float IR_L = 800;
-//float IR_R = 800;
+int IR_DIST_LIMIT_LEFT = 720;  // Below this value will cause nudge
+int IR_DIST_LIMIT_RIGHT = 720;  // Below this value will cause nudge
 
 // Tune variables
 #define NOTE_A4  440
@@ -41,7 +39,7 @@ int melody[] = {NOTE_G4, NOTE_G4, NOTE_A4, NOTE_G4, NOTE_C5, NOTE_B4};
 int noteDurations[] = {8,8,4,4,4,4};
 
 void setup() {
-  Serial.begin(9600);  // Serial prints to be removed after code is finalised
+//  Serial.begin(9600);  // Serial prints to be removed after code is finalised
   motorL.run(-speedL);
   motorR.run(speedR);
 }
@@ -52,7 +50,7 @@ void loop() {
     char c = 'N';
     motorL.stop();
     motorR.stop();
-    delay(200);
+//    delay(200);
     c = get_colour();
     move(c);
     
@@ -60,22 +58,25 @@ void loop() {
     motorR.run(speedR);
   }
   
-  // If mbot gets too close to a wall in front, code will run
-  // if (ultrasonic_sensor(ultr)) {
-  //   motorL.stop();
-  //   motorR.stop();
-  // }
+//  // If mbot gets too close to a wall in front, code will run
+//  if (ultrasonic_sensor(ultr)) {
+//    motorL.run(-speedL/2);
+//    motorR.run(speedR/2);
+////    delay(200);
+//    motorL.stop();
+//    motorR.stop();
+//  }
 
   // If mbot gets too close to either side walls, code will run
   if (infrared_sensor() == 1) {
     // nudge right if mbot is too far left
-    Serial.println("NUDGE RIGHT");
+//    Serial.println("NUDGE RIGHT");
     motorL.run(-speedL);
-    motorR.run(50);
+    motorR.run(80);
   } else if (infrared_sensor() == 2) {
     // nudge left if mbot is too far right
-    Serial.println("NUDGE LEFT");
-    motorL.run(-50);
+//    Serial.println("NUDGE LEFT");
+    motorL.run(-80);
     motorR.run(speedR);;
   } else {
     motorL.run(-speedL);
@@ -102,29 +103,54 @@ void turn_left() {
 }
 
 void turn_around() {
-  turn_right();
-  motorL.stop();
-  motorR.stop();
-  delay(10);
-  turn_right();
+  int ir_left = analogRead(ir_left_pin);
+  int ir_right = analogRead(ir_right_pin);
+  if (ir_left < 805) {
+    turn_right();
+    motorL.stop();
+    motorR.stop();
+    turn_right();
+    motorL.stop();
+    motorR.stop();
+    delay(10);
+  } else {
+    turn_left(); 
+    motorL.stop();
+    motorR.stop();
+    turn_left();
+    motorL.stop();
+    motorR.stop();
+    delay(10);
+  }
 }
 
 void forward() {
   motorL.run(-speedL);
   motorR.run(speedR);
-  delay(500);
+  delay(550);
 }
 
 void successive_left_turn() {
   turn_left();
   forward();
-  turn_left();
+//  turn_left();
+  motorL.run(speedL);
+  motorR.run(speedR);
+  delay(turnDelayL+85);
+  motorL.stop();
+  motorR.stop();
+  
 }
 
 void successive_right_turn() {
   turn_right();
   forward();
-  turn_right();
+//  turn_right();
+  motorL.run(-speedL);
+  motorR.run(-speedR);
+  delay(turnDelayR+85);
+  motorL.stop();
+  motorR.stop();
 }
 
 void move(char c) {
@@ -185,48 +211,48 @@ bool check_line(MeLineFollower lineFinder) {
 // -------------------------------
 
 char get_colour(){
-  Serial.println("COLOUR CHALLENGE:");
+//  Serial.println("COLOUR CHALLENGE:");
   for(int c = 0;c<3;c++){
     led.setColor((c==0) ? 255:0, (c==1) ? 255:0,(c==2) ? 255:0);
     led.show();
-    delay(150);
+    delay(10);
     colourArray[c] = getAvgReading(5);
+//    colourArray[c] = lightSensor.read();
     colourArray[c] = (colourArray[c] - blackArray[c])/(greyDiff[c])*255;
     led.setColor(0, 0, 0);
     led.show();
-    delay(150);
   }
 
-  // Debug
-  for (int i=0;i<3;i++) {
-    Serial.print(int(colourArray[i]));
-    Serial.print("; ");
-  }
-  Serial.println();
+//  // Debug
+//  for (int i=0;i<3;i++) {
+//    Serial.print(int(colourArray[i]));
+//    Serial.print("; ");
+//  }
+//  Serial.println();
 
   if (colourArray[0] > 200 && colourArray[1] > 200 && colourArray[2] > 200) {
-    Serial.println('N');
+//    Serial.println('N');
     return 'N';
   } else if (colourArray[0] > 230) {
-    Serial.println('Y');
+//    Serial.println('Y');
     return 'Y';
   } else if (colourArray[0] < 20 && colourArray[1] < 20) {
-    Serial.println('K');
+//    Serial.println('K');
     return 'K';
   } else if (colourArray[0] < 90) {
-    Serial.println('G');
+//    Serial.println('G');
     return 'G';
   } else if (colourArray[1] < 90) {
-    Serial.println('R');
+//    Serial.println('R');
     return 'R';
   } else if (colourArray[1] > 160) {
-    Serial.println('B');
+//    Serial.println('B');
     return 'B';
   } else if (colourArray[2] > 110) {
-    Serial.println('P');
+//    Serial.println('P');
     return 'P';
   } else {
-    Serial.println('E');
+//    Serial.println('E');
     return 'E';
   }
 }
@@ -250,9 +276,9 @@ int getAvgReading(int times){
 bool ultrasonic_sensor(MeUltrasonicSensor ultr) {
   int distance = ultr.distanceCm();
 
-  // Debug
-  Serial.print("Ultrasonic distance: ");
-  Serial.println(distance);
+//  // Debug
+//  Serial.print("Ultrasonic distance: ");
+//  Serial.println(distance);
 
   return distance <= ULTR_DIST_LIMIT;
 }
@@ -264,9 +290,9 @@ int infrared_sensor() {
   int right_dist = analogRead(ir_right_pin);
 
   // Debug
-  Serial.print(left_dist);
-  Serial.print(", ");
-  Serial.println(right_dist);
+//  Serial.print(left_dist);
+//  Serial.print(", ");
+//  Serial.println(right_dist);
 
   if (left_dist <= IR_DIST_LIMIT_LEFT) {
     return 1;  // 1 for nudge right
