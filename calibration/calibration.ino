@@ -1,7 +1,8 @@
 #include "MeMCore.h"
 
 /* Code to calibrate colour sensor and motor of mBot 
-   Colour calibration code is adapted from Week 10 Studio 1*/
+   Colour calibration code is adapted from Week 10 Studio 1.
+   Motor variables to be calibrated are changes manually until accurate. */
 
 // Motor variables
 MeDCMotor motorL(M2);  // Left motor
@@ -21,13 +22,13 @@ float blackArray[] = {0,0,0};
 float colourArray[] = {0,0,0};
 float greyDiff[] = {0,0,0};
 
-// true for colour, false for motor
-bool calibration_mode = true;
+bool calibration_mode = true;  // true for colour, false for motor
 long start;  // To keep time
 
 void setup() {
   Serial.begin(9600);
 
+  // If colour calibration is not needed, press button to start motor calibration
   start = millis();
   Serial.println("Press button to skip colour calibration.");
   while (millis()-start < 5000) {
@@ -68,6 +69,7 @@ void setup() {
 }
 
 void loop() {
+  // Allow to swap between colour calibration and motor calibration by pressing button
   start = millis();
   while (millis()-start < 3000) {
     if (analogRead(7) == 0) {
@@ -77,10 +79,10 @@ void loop() {
   }
   if (calibration_mode) {
     Serial.println("COLOUR MODE");
-    get_colour();
+    get_colour();  // Get colour above mBot and display colour code in Serial monitor
   } else {
     Serial.println("MOTOR MODE");
-    motor_test();
+    motor_test();  // Run motor commands to test accuracy
   }
   delay(1000);
 }
@@ -141,8 +143,7 @@ char get_colour(){
   for(int c = 0;c<3;c++){
     led.setColor((c==0) ? 255:0, (c==1) ? 255:0,(c==2) ? 255:0); led.show();
     delay(DELAY);
-    colourArray[c] = lightSensor.read();
-//    colourArray[c] = getAvgReading(5);  // Get intensity of light
+    colourArray[c] = getAvgReading(5);  // Get intensity of light
     colourArray[c] = (colourArray[c] - blackArray[c])/(greyDiff[c])*255;
     led.setColor(0, 0, 0); led.show();
     delay(DELAY);
